@@ -23,21 +23,31 @@ nextApp.prepare().then(() => {
   });
 
   app.post("/api/registration", async (req, res) => {
-    try {
-      const { login, password, firstName, lastName, email } = req.body;
+    if (
+      Database.user_provider.findOne({
+        login: req.body.login
+      })
+    ) {
+      console.log(
+        "Данный пользователь уже существует, попробуйте другой логин"
+      );
+    } else {
+      try {
+        const { login, password, firstName, lastName, email } = req.body;
 
-      Database.user_provider.insert({
-        login,
-        password,
-        firstName,
-        lastName,
-        email
-      });
+        Database.user_provider.insert({
+          login,
+          password,
+          firstName,
+          lastName,
+          email
+        });
 
-      res.json({ status: 200 });
-    } catch (err) {
-      console.log(err);
-      res.json({ stats: 404 });
+        res.json({ status: 200 });
+      } catch (err) {
+        console.log(err);
+        res.json({ stats: 404 });
+      }
     }
   });
   app.get("/api/authorization/:userName/:userPassword", async (req, res) => {
@@ -70,18 +80,21 @@ nextApp.prepare().then(() => {
         return next();
       }
       return nextApp.render(req, res, "/login");
-    } else {
-      const user = await Database.user_provider.findOne({
-        _id: req.cookies.userId
-      });
-      console.log(user, "123123", req.cookies.userId, req.headers.userid);
-      if (user.lock) {
-        if (req.originalUrl.includes("/locked")) {
-          return next();
-        }
-        return nextApp.render(req, res, "/locked");
-      }
     }
+    // lock unlock set
+    // else {
+    //   const user = await Database.user_provider.findOne({
+    //     _id: req.cookies.userId
+    //   });
+    //   console.log(user, "123123", req.cookies.userId, req.headers.userid);
+    //
+    //   if (user.lock) {
+    //     if (req.originalUrl.includes("/locked")) {
+    //       return next();
+    //     }
+    //     return nextApp.render(req, res, "/locked");
+    //   }
+    // }
     next();
   });
   // app.get("*", async (req, res, next) => {
@@ -161,8 +174,9 @@ nextApp.prepare().then(() => {
     const userid = req.cookies.userId;
     const user = await Database.user_provider.findOne({ _id: userid });
     const dialogs = await Database.dialog_provider.find({
-      users: { $in: [user.login] }
+      users: { $in: [user._id] }
     });
+    console.log("user ", user, "userid ", userid, "dia ", dialogs);
 
     const getMessagesForDialogs = async () => {
       for (var i = 0; i < dialogs.length; i++) {
@@ -174,7 +188,7 @@ nextApp.prepare().then(() => {
         const lastMessage = lastMessages[lastMessages.length - 1];
 
         dialog.message = lastMessage ? lastMessage.text : "";
-        dialog.time = lastMessage ? lastMessage.time : "";
+        dialog.time = lastMessage ? lastMessage.time : null;
       }
     };
     await getMessagesForDialogs();
@@ -184,52 +198,53 @@ nextApp.prepare().then(() => {
     });
   });
 
-  app.get("/api/lock", async (req, res) => {
-    const userId = req.cookies.userId;
-
-    const user = await Database.user_provider.findOne({
-      _id: userId
-    });
-    console.log(user);
-    if (user.lockPass) {
-      Database.user_provider.update(
-        { _id: userId },
-        { $set: { lock: true } },
-        {}
-      );
-      res.json({ status: 200 });
-    } else {
-      res.json({ error: "Пожалуйста,Добавьте пароль" });
-    }
-  });
-  app.post("/api/unlock", async (req, res) => {
-    const userId = req.cookies.userId;
-
-    const user = await Database.user_provider.findOne({
-      _id: userId
-    });
-    const { lockPass } = req.body;
-    if (user.lockPass && user.lockPass === lockPass) {
-      Database.user_provider.update(
-        { _id: userId },
-        { $set: { lock: false } },
-        {}
-      );
-      res.json({ status: 200, isRight: user.lockPass === lockPass });
-    } else {
-      res.json({ error: "Введен неверный пароль" });
-    }
-  });
-
-  app.post("/api/lock/set", async (req, res) => {
-    const userId = req.cookies.userId;
-    const { lockPass } = req.body;
-    const user = await Database.user_provider.findOne({
-      _id: userId
-    });
-    Database.user_provider.update({ _id: userId }, { $set: { lockPass } }, {});
-    res.json({ status: 200 });
-  });
+  // lock unlock
+  // app.get("/api/lock", async (req, res) => {
+  //   const userId = req.cookies.userId;
+  //
+  //   const user = await Database.user_provider.findOne({
+  //     _id: userId
+  //   });
+  //   console.log(user);
+  //   if (user.lockPass) {
+  //     Database.user_provider.update(
+  //       { _id: userId },
+  //       { $set: { lock: true } },
+  //       {}
+  //     );
+  //     res.json({ status: 200 });
+  //   } else {
+  //     res.json({ error: "Пожалуйста,Добавьте пароль" });
+  //   }
+  // });
+  // app.post("/api/unlock", async (req, res) => {
+  //   const userId = req.cookies.userId;
+  //
+  //   const user = await Database.user_provider.findOne({
+  //     _id: userId
+  //   });
+  //   const { lockPass } = req.body;
+  //   if (user.lockPass && user.lockPass === lockPass) {
+  //     Database.user_provider.update(
+  //       { _id: userId },
+  //       { $set: { lock: false } },
+  //       {}
+  //     );
+  //     res.json({ status: 200, isRight: user.lockPass === lockPass });
+  //   } else {
+  //     res.json({ error: "Введен неверный пароль" });
+  //   }
+  // });
+  //
+  // app.post("/api/lock/set", async (req, res) => {
+  //   const userId = req.cookies.userId;
+  //   const { lockPass } = req.body;
+  //   const user = await Database.user_provider.findOne({
+  //     _id: userId
+  //   });
+  //   Database.user_provider.update({ _id: userId }, { $set: { lockPass } }, {});
+  //   res.json({ status: 200 });
+  // });
 
   app.all("*", (req, res) => {
     return handle(req, res);

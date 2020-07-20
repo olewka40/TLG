@@ -46,7 +46,11 @@ export const DialogContainer = () => {
                               />
                             </TextMessage>
 
-                            <Time>{message.time.format("H:mm")}</Time>
+                            <Time>
+                              {message.time
+                                ? message.time.format("H:mm")
+                                : null}
+                            </Time>
                             <Readed>
                               {/*<CheckIcon color={"primary"} />*/}
                               <DoneAllIcon color="primary" />
