@@ -34,6 +34,17 @@ class UserProvider {
       });
     });
   }
+  async update(query, params, options) {
+    return new Promise((resolve, reject) => {
+      this.userDB.update(query, params, options, (err, data) => {
+        // если ошибка тупо выходим
+        if (err) return reject();
+
+        // иначе возвращаем данные
+        resolve(data);
+      });
+    });
+  }
 
   insert(user) {
     this.userDB.insert(user);

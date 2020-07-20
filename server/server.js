@@ -59,8 +59,9 @@ nextApp.prepare().then(() => {
       }
     }
   });
+  app.get("*", async (req, res, next) => {
+    // авторизация
 
-  app.get("*", (req, res, next) => {
     if (!req.cookies.userId && !req.headers.userid) {
       if (
         req.originalUrl.includes("/login") ||
@@ -69,9 +70,34 @@ nextApp.prepare().then(() => {
         return next();
       }
       return nextApp.render(req, res, "/login");
+    } else {
+      const user = await Database.user_provider.findOne({
+        _id: req.cookies.userId
+      });
+      console.log(user, "123123", req.cookies.userId, req.headers.userid);
+      if (user.lock) {
+        if (req.originalUrl.includes("/locked")) {
+          return next();
+        }
+        return nextApp.render(req, res, "/locked");
+      }
     }
     next();
   });
+  // app.get("*", async (req, res, next) => {
+  //   const user = await Database.user_provider.findOne({
+  //     _id: req.cookies.userId
+  //   });
+  //   console.log(user, "123123", req.cookies.userId, req.headers.userid);
+  //   if (user.lock) {
+  //     if (req.originalUrl.includes("/locked")) {
+  //       return next();
+  //     }
+  //     return nextApp.render(req, res, "/locked");
+  //   }
+  //
+  //   next();
+  // });
 
   app.get("/api/user", async (req, res) => {
     const userid = req.cookies.userId;
@@ -120,9 +146,11 @@ nextApp.prepare().then(() => {
 
   app.get("/api/getMessages/:dialogid", async (req, res) => {
     const { dialogid } = req.params;
-    const messages = await Database.message_provider.find({
-      dialogId: dialogid
-    });
+    const messages = await Database.message_provider.find(
+      { dialogId: dialogid }
+      // undefined,
+      // { time: 1 }
+    );
     res.json({
       dialogId: dialogid,
       messages: messages
@@ -131,7 +159,10 @@ nextApp.prepare().then(() => {
 
   app.get("/api/getDialogs", async (req, res) => {
     const userid = req.cookies.userId;
-    const dialogs = await Database.dialog_provider.find();
+    const user = await Database.user_provider.findOne({ _id: userid });
+    const dialogs = await Database.dialog_provider.find({
+      users: { $in: [user.login] }
+    });
 
     const getMessagesForDialogs = async () => {
       for (var i = 0; i < dialogs.length; i++) {
@@ -142,15 +173,62 @@ nextApp.prepare().then(() => {
 
         const lastMessage = lastMessages[lastMessages.length - 1];
 
-        dialog.message = lastMessage.text;
-        dialog.time = lastMessage.time;
+        dialog.message = lastMessage ? lastMessage.text : "";
+        dialog.time = lastMessage ? lastMessage.time : "";
       }
     };
     await getMessagesForDialogs();
 
     res.json({
-      data: dialogs
+      data: dialogs || []
     });
+  });
+
+  app.get("/api/lock", async (req, res) => {
+    const userId = req.cookies.userId;
+
+    const user = await Database.user_provider.findOne({
+      _id: userId
+    });
+    console.log(user);
+    if (user.lockPass) {
+      Database.user_provider.update(
+        { _id: userId },
+        { $set: { lock: true } },
+        {}
+      );
+      res.json({ status: 200 });
+    } else {
+      res.json({ error: "Пожалуйста,Добавьте пароль" });
+    }
+  });
+  app.post("/api/unlock", async (req, res) => {
+    const userId = req.cookies.userId;
+
+    const user = await Database.user_provider.findOne({
+      _id: userId
+    });
+    const { lockPass } = req.body;
+    if (user.lockPass && user.lockPass === lockPass) {
+      Database.user_provider.update(
+        { _id: userId },
+        { $set: { lock: false } },
+        {}
+      );
+      res.json({ status: 200, isRight: user.lockPass === lockPass });
+    } else {
+      res.json({ error: "Введен неверный пароль" });
+    }
+  });
+
+  app.post("/api/lock/set", async (req, res) => {
+    const userId = req.cookies.userId;
+    const { lockPass } = req.body;
+    const user = await Database.user_provider.findOne({
+      _id: userId
+    });
+    Database.user_provider.update({ _id: userId }, { $set: { lockPass } }, {});
+    res.json({ status: 200 });
   });
 
   app.all("*", (req, res) => {
@@ -174,19 +252,34 @@ async function initializeDB() {
       password: "1234",
       firstName: "1234",
       lastName: "1234",
-      email: "123@mail.ri"
+      email: "123@mail.ri",
+      lockPass: "",
+      lock: false
     });
     Database.user_provider.insert({
       login: "1235",
       password: "1235",
       firstName: "1235",
       lastName: "1235",
-      email: "1235@mail.ri"
+      email: "1235@mail.ri",
+      lockPass: "",
+      lock: false
     });
   }
 
   if (!createdDialog) {
-    Database.dialog_provider.insert({ name: "Squal", users: ["1234", "1235"] });
+    Database.dialog_provider.insert({
+      name: "Squal45",
+      users: ["1234", "1235"]
+    });
+    Database.dialog_provider.insert({
+      name: "Squal46",
+      users: ["1234", "1236"]
+    });
+    Database.dialog_provider.insert({
+      name: "Squal56",
+      users: ["1235", "1236"]
+    });
   }
 
   if (!createdMessage) {
@@ -209,3 +302,12 @@ async function initializeDB() {
     });
   }
 }
+
+// TODO:
+//  context в сайдбаре эмодзи
+// сделать гифки
+// сделать отправку картинок и закгрузку аватаров
+// лок скрин с паролем
+// сортировка смс
+// несколько диа и создание
+//

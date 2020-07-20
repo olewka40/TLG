@@ -5,18 +5,28 @@ import React, {
   useRef,
   useState
 } from "react";
-import { IconButton } from "@material-ui/core";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import SendIcon from "@material-ui/icons/Send";
 import MoodIcon from "@material-ui/icons/Mood";
 import styled from "styled-components";
 import SocketService from "../../services/SocketService";
 import { Picker, Emoji } from "emoji-mart";
-import Popover from "@material-ui/core/Popover";
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 import TextareaAutosize from "react-textarea-autosize";
 import { MessageLayoutContext } from "../../context/messageLayoutContext";
+import PropTypes from "prop-types";
+
+import {
+  Tab,
+  Tabs,
+  AppBar,
+  Popover,
+  IconButton,
+  Box,
+  Typography
+} from "@material-ui/core";
+import { EmojiBarToMessageContext } from "../../context/emojiBarToMessageContext";
 
 const useStyles = makeStyles(theme => ({
   popover: {
@@ -26,7 +36,31 @@ const useStyles = makeStyles(theme => ({
     pointerEvents: "auto"
   }
 }));
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
 
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby={`scrollable-auto-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box style={{ padding: 0 }} p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired
+};
 export default () => {
   const router = useRouter();
   const areaRef = useRef();
@@ -62,7 +96,12 @@ export default () => {
     setHovered(false);
   }, []);
   const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+  // const { messagee } = useContext(EmojiBarToMessageContext);
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   return (
     <MsgPlace>
       <IconButton>
@@ -101,13 +140,39 @@ export default () => {
             horizontal: "right"
           }}
         >
-          <Picker
-            style={{ height: 750, borderRadius: 3, overflowY: "hidden" }}
-            title="Pick your emoji…"
-            emoji="point_up"
-            set="apple"
-            onSelect={emoji => SetMessage(message + emoji.colons)}
-          />
+          <Tabs
+            style={{ color: "#6b757f" }}
+            value={value}
+            onChange={handleChange}
+            indicatorColor="primary"
+            variant="standard"
+            scrollButtons="auto"
+            aria-label="scrollable auto tabs example"
+          >
+            <Tab style={{ minWidth: "100px" }} label="emoji" />
+            <Tab style={{ minWidth: "100px" }} label="stickers" />
+            <Tab style={{ minWidth: "100px" }} label="gifs" />
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            <Picker
+              style={{
+                height: "600px",
+                width: "300px",
+                borderRadius: 3,
+                overflowY: "hidden"
+              }}
+              title="Pick your emoji…"
+              emoji="point_up"
+              set="apple"
+              onSelect={emoji => SetMessage(message + emoji.colons)}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            Стикеры
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            Гифки
+          </TabPanel>
         </Popover>
       </IconButton>
       <IconButton onClick={onSend}>

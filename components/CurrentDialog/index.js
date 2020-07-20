@@ -29,7 +29,7 @@ export const DialogContainer = () => {
                     messages.map(message => {
                       return (
                         <ListOfMesseges
-                          myMsg={message.senderId === userId}
+                          isSender={message.senderId === userId}
                           key={message.id}
                         >
                           <ImgAvatarCurrent src={avatarImg} />
@@ -90,7 +90,7 @@ const ListOfMesseges = styled.div`
   width: 100%;
   justify-content: flex-start;
   ${p =>
-    p.myMsg &&
+    p.isSender &&
     css`
       ${ImgAvatarCurrent} {
         display: none;

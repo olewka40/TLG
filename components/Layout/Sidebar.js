@@ -15,7 +15,18 @@ export const Sidebar = () => {
     await axios.get("/api/authorization/logout");
     router.replace("/login");
   }, []);
-
+  const handleLock = useCallback(async () => {
+    const {
+      data: { error }
+    } = await axios.get("/api/lock");
+    if (!error) {
+      router.push("/locked");
+    } else {
+      const lockPass = prompt("Введите временный пароль");
+      await axios.post("api/lock/set", { lockPass });
+      handleLock();
+    }
+  });
   return (
     <StyledSidebar opened={opened}>
       <Header>
@@ -33,11 +44,7 @@ export const Sidebar = () => {
             <SearchInput placeholder="  Найти..." />
           </OpenHidden>
 
-          <IconButton
-            onClick={() => {
-              router.push("/locked");
-            }}
-          >
+          <IconButton onClick={handleLock}>
             <OpenHidden opened={opened}>
               <LockOpenIcon style={{ color: "#6b757f" }} />
             </OpenHidden>
@@ -77,7 +84,7 @@ display: none;
 `;
 const Main = styled.div`
   height: 95vh;
-  overflow-y: auto;
+  overflow: hidden;
 `;
 const Footer = styled.div`
   display: flex;

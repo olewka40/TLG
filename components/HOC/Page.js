@@ -50,10 +50,9 @@ export default function withContextPage(Component) {
       const {
         data: { data: dialogs }
       } = await axios.get("/api/getDialogs", { headers: { userId } });
-
       return {
         ...appProps,
-        userId: userId,
+        userId,
         dialogs
       };
     }
@@ -64,8 +63,6 @@ export default function withContextPage(Component) {
         ...appProps
       } = this.props;
       const { dialogs } = this.state;
-      console.log(dialogs);
-
       // экшены
       const { updateDialog } = this;
       return (

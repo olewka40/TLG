@@ -27,7 +27,7 @@ const ListOfDialogs = props => {
     <List opened={opened}>
       {dialogs.map(({ _id, avatar, name, message, time, readed }) => (
         <Dialog
-          active={id == _id}
+          active={(id, _id)}
           key={_id}
           avatarImg={avatar}
           name={name}
