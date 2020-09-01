@@ -2,6 +2,7 @@ import React, { useCallback, useState, memo } from "react";
 import { IconButton } from "@material-ui/core";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import { Menu } from "@material-ui/icons";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -17,6 +18,9 @@ export const Sidebar = memo(() => {
   const logout = useCallback(async () => {
     await axios.get("/logout");
     router.replace("/login");
+  }, []);
+  const profile = useCallback(async () => {
+    router.replace("/profile");
   }, []);
 
   return (
@@ -51,8 +55,11 @@ export const Sidebar = memo(() => {
         <ListOfDialogs opened={opened} />
       </Main>
       <Footer>
-        <IconButton size="medium">
-          <ExitToAppIcon color="primary" fontSize="large" onClick={logout} />
+        <IconButton onClick={logout} size="medium">
+          <ExitToAppIcon color="primary" fontSize="large" />
+        </IconButton>
+        <IconButton onClick={profile} size="medium">
+          <AccountBoxIcon color="primary" fontSize="large" />
         </IconButton>
       </Footer>
     </StyledSidebar>

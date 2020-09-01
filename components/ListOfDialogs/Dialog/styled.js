@@ -27,7 +27,6 @@ export const Message = styled.div`
   font-size: 13px;
   display: flex;
   align-items: flex-end;
-  border-bottom: 1px solid gray;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

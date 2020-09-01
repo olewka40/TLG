@@ -39,11 +39,11 @@ export const DialogsList = memo(({ message }) => {
   return (
     <ListOfMesseges key={message.id}>
       <ImgAvatarCurrent src={`http://localhost:3000/api/files/${avatar}`} />
-      <Messege>
+      <Messege myMsg={myMsg}>
         <TextMessage>
           <Emoji text={message.text} />
         </TextMessage>
-        <Time>
+        <Time myMsg={myMsg}>
           <Moment format="HH:mm">{message.time}</Moment>
         </Time>
         {myMsg && (

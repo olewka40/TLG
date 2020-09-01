@@ -4,13 +4,19 @@ import axios from "axios";
 import { Button, Card } from "@material-ui/core";
 import { StyledButton } from "../Registration/styled";
 import FileUpload from "../../pages/upload";
+import { useRouter } from "next/router";
 
 export const Profile = () => {
   const [profileInfo, setProfileInfo] = useState({});
   const [changeAvatar, setChangeAvatar] = useState(false);
+  const router = useRouter();
+
   const getUserInfo = useCallback(async () => {
     const { data } = await axios.get("/api/getUserInfo");
     setProfileInfo(data.userInfo[0]);
+  }, []);
+  const toDialogs = useCallback(async () => {
+    router.push("/");
   }, []);
 
   const handleChangeAvatar = useCallback(() => {
@@ -32,17 +38,19 @@ export const Profile = () => {
             alt="Avatar"
           />
         </Info>
-
         <StyledButton color="primary" variant="contained" onClick={getUserInfo}>
           Получить информацию по данному профилю
         </StyledButton>
-        <Button
+        <StyledButton
           color="primary"
           variant="contained"
           onClick={handleChangeAvatar}
         >
           Сменить Аватар
-        </Button>
+        </StyledButton>{" "}
+        <StyledButton color="primary" variant="contained" onClick={toDialogs}>
+          Вернуться к диалогам
+        </StyledButton>
         {changeAvatar && <FileUpload />}
       </CardContent>
     </ProfileContainer>

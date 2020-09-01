@@ -23,8 +23,8 @@ export const StyledLink = styled(Link)`
 `;
 export const StyledButton = styled(Button)`
    {
-    margin-top: 15px !important;
-    margin-bottom: 15px !important;
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
   }
 `;
 export const RegistrationForm = styled.div`

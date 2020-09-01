@@ -40,12 +40,14 @@ export const Dialog = ({
           <TopInfo>
             <UserName>{name} </UserName>
 
-            <MsgInfo>
-              <CheckIcon color="primary" fontSize="small" />
-              <Time>
-                <Moment format="HH:mm">{time}</Moment>
-              </Time>
-            </MsgInfo>
+            {message && (
+              <MsgInfo>
+                <CheckIcon color="primary" fontSize="small" />
+                <Time>
+                  <Moment format="HH:mm">{time}</Moment>
+                </Time>
+              </MsgInfo>
+            )}
           </TopInfo>
           <BotInfo>
             <Message>

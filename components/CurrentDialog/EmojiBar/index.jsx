@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { EmojiTabsContainer } from "./styled";
 import { EmojiPicker } from "./EmojiPicker";
 import SwipeableViews from "react-swipeable-views";
+import uuid from "react-uuid";
 
 export const EmojiBar = ({ setMessage, message }) => {
   const [value, setValue] = React.useState(0);
@@ -47,13 +48,14 @@ const TabPanel = props => {
 
   return (
     <Fragment
+      key={uuid()}
       role="tabpanel"
       hidden={value !== index}
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}
       {...other}
     >
-      {value === index && <Fragment> {children}</Fragment>}
+      {value === index && <>{children}</>}
     </Fragment>
   );
 };

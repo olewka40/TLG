@@ -35,6 +35,7 @@
     "react-giphy-searchbox": "^1.4.0",
     "react-swipeable-views": "^0.13.9",
     "react-textarea-autosize": "^8.1.1",
+    "react-uuid": "^1.0.2",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "styled-components": "^5.1.1"
@@ -47,6 +48,7 @@
     "formidable": "^1.2.2",
     "nodemon": "^2.0.4",
     "prop-types": "^15.7.2",
-    "react-moment": "^0.9.7"
+    "react-moment": "^0.9.7",
+    "uuid": "^8.3.0"
   }
 }

@@ -19,14 +19,15 @@ export const Messege = styled.div`
   font-size: 16px;
   border: 2px solid #17212b;
   border-radius: 10px;
-  color: #efe9e9;
+  color: #ebf8ff;
   margin-top: 5px;
   margin-left: 10px;
-  background-color: #17212b;
+  background-color: ${props => (props.myMsg ? "#2b5279" : "#182633")};
 `;
 
 export const Time = styled.div`
-  color: grey;
+  color: ${props => (props.myMsg ? "#84a7cf" : "#6c7e8a")};
+  margin-bottom: 3px;
   margin-right: 10px;
   display: flex;
   height: 100%;
