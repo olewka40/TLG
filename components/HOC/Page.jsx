@@ -30,6 +30,16 @@ export default function withContextPage(Component) {
       };
     }
 
+    componentDidMount() {
+      console.log("didmount", this.props);
+    }
+    componentDidUpdate(prevProps) {
+      if (this.props.dialogs !== prevProps.dialogs) {
+        console.log("didUpdate", this.props);
+        this.setState({ dialogs: this.props.dialogs.map(apiMessageToMessage) });
+      }
+    }
+
     updateDialog = (dialogid, params) => {
       const { dialogs } = this.state;
       const dialogIndex = dialogs.findIndex(dialog => dialog._id === dialogid);
@@ -50,11 +60,24 @@ export default function withContextPage(Component) {
       const {
         data: { data: dialogs }
       } = await axios.get(`/api/getDialogs/${userId}`, { headers: { userId } });
-
+      const {
+        data: { users }
+      } = await axios.get(`/api/getUsers`, {
+        headers: { userId }
+      });
+      const newDialogs = dialogs.map(dialog => {
+        return {
+          ...dialog,
+          users: dialog.users.map(({ userId }) => {
+            return users.find(user => user._id === userId);
+          })
+        };
+      });
+      console.log(newDialogs);
       return {
         ...appProps,
         userId: userId,
-        dialogs
+        dialogs: newDialogs
       };
     }
     render() {

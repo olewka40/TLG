@@ -14,7 +14,6 @@ import {
   BotInfo,
   Message
 } from "./styled";
-import axios from "axios";
 
 export const Dialog = ({
   userId,
@@ -27,22 +26,7 @@ export const Dialog = ({
   opened
 }) => {
   const router = useRouter();
-  const [avatar, setAvatar] = useState("");
-
-  const handleGetAvatars = useCallback(async () => {
-    const sobesednikId = users.filter(e => e.userId !== userId)[0].userId;
-    const { data } = await axios.get(`/api/getUserAvatar/${sobesednikId}`);
-    if (data === null) {
-      return null;
-    } else {
-      setAvatar(data.userAvatar.avatar);
-    }
-  }, [users]);
-
-  useEffect(() => {
-    handleGetAvatars();
-  }, []);
-
+  const opponent = users.filter(e => e._id === userId)[0];
   return (
     <DialogContainer
       active={active}
@@ -50,7 +34,7 @@ export const Dialog = ({
         router.push("/dialogs/[id]", `/dialogs/${dialogid}`);
       }}
     >
-      <ImgAvatar src={`http://localhost:3000/api/files/${avatar}`} />
+      <ImgAvatar src={`http://localhost:3000/api/files/${opponent.avatar}`} />
       {opened && (
         <DialogInfo>
           <TopInfo>

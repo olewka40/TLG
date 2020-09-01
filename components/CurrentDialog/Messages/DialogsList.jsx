@@ -25,23 +25,19 @@ export const DialogsList = memo(({ message }) => {
   const myMsg = message.senderId === userId;
 
   const handleGetAvatars = useCallback(async () => {
-    if (!myMsg) {
-      const { data } = await axios.get(
-        `/api/getUserAvatar/${message.senderId}`
-      );
-      if (data === null) {
-        return null;
-      } else {
-        setAvatar(data.userAvatar.avatar);
-      }
-    } else return null;
+    const { data } = await axios.get(`/api/getUserAvatar/${message.senderId}`);
+    if (data === null) {
+      return null;
+    } else {
+      setAvatar(data.userAvatar.avatar);
+    }
   }, [message, setAvatar]);
 
   useEffect(() => {
-    handleGetAvatars();
+    handleGetAvatars().then(r => r);
   }, []);
   return (
-    <ListOfMesseges myMsg={myMsg} key={message.id}>
+    <ListOfMesseges key={message.id}>
       <ImgAvatarCurrent src={`http://localhost:3000/api/files/${avatar}`} />
       <Messege>
         <TextMessage>

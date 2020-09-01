@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import { Select } from "@material-ui/core";
 
 export const StyledSidebar = styled.div`
   display: flex;
@@ -37,13 +38,4 @@ export const StyledToolbar = styled.div`
   display: flex;
   padding-left: 5px;
   width: 100%;
-`;
-export const SearchInput = styled.input`
-  width: 100%;
-  height: 30px;
-  border-radius: 5px;
-  margin-top: 10px;
-  border: 0;
-  background-color: #232f3d;
-  color: white;
 `;

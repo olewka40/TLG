@@ -54,6 +54,7 @@ nextApp.prepare().then(() => {
           password,
           firstName,
           lastName,
+          avatar: "/default_avatar.png",
           email
         });
 
@@ -218,6 +219,40 @@ nextApp.prepare().then(() => {
     res.json({
       userAvatar
     });
+  });
+  app.get("/api/getUsers", async (req, res) => {
+    const users = await Database.user_provider.find();
+    res.json({
+      users
+    });
+  });
+
+  app.post("/api/createDialog/:userId/:secondUserId", async (req, res) => {
+    const { userId, secondUserId } = req.params;
+    const firstUser = await Database.user_provider.findOne({
+      _id: userId
+    });
+    const secondUser = await Database.user_provider.findOne({
+      _id: secondUserId
+    });
+    const users = [{ userId: firstUser._id }, { userId: secondUser._id }];
+
+    const checkDialog = await Database.dialog_provider.findOne({
+      users: users
+    });
+
+    if (checkDialog) {
+      console.log("Данный диалог уже существует");
+    } else {
+      Database.dialog_provider.insert({
+        name: `${firstUser.login} and ${secondUser.login}`,
+        users: users
+      });
+      const newDialog = await Database.dialog_provider.findOne({
+        users: users
+      });
+      res.json({ newDialog });
+    }
   });
 
   app.get("/api/getDialogs/:userId", async (req, res) => {

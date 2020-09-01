@@ -10,8 +10,10 @@ import { useRouter } from "next/router";
 export const Header = memo(() => {
   const router = useRouter();
   const { dialogs } = useContext(DialogsContext);
-  const dialog = dialogs.find(dialog => dialog._id === router.query.id);
 
+  const dialog = dialogs.find(dialog => dialog._id === router.query.id);
+  console.log(dialogs, router.query.id);
+  if (!dialog) return null;
   return (
     <NavBar>
       <Profile>

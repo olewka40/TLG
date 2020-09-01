@@ -4,14 +4,6 @@ export const ListOfMesseges = styled.div`
   display: flex;
   width: 100%;
   justify-content: flex-start;
-  ${p =>
-    p.myMsg &&
-    css`
-      ${ImgAvatarCurrent} {
-        display: none;
-      }
-      justify-content: flex-end;
-    `}
 `;
 export const TextMessage = styled.div`
   display: flex;

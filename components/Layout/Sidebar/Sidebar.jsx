@@ -6,19 +6,14 @@ import { Menu } from "@material-ui/icons";
 import { useRouter } from "next/router";
 import axios from "axios";
 import ListOfDialogs from "../../ListOfDialogs";
-import {
-  StyledSidebar,
-  SearchInput,
-  StyledToolbar,
-  Header,
-  OpenHidden,
-  Footer,
-  Main
-} from "./styled";
+import { StyledSidebar, StyledToolbar, Header, Footer, Main } from "./styled";
+import { Searcher } from "./Searcher";
 
 export const Sidebar = memo(() => {
   const [opened, setOpen] = useState(true);
+
   const router = useRouter();
+
   const logout = useCallback(async () => {
     await axios.get("/logout");
     router.replace("/login");
@@ -39,7 +34,8 @@ export const Sidebar = memo(() => {
           </IconButton>
           {opened && (
             <>
-              <SearchInput placeholder="  Найти..." />
+              <Searcher />
+
               <IconButton
                 onClick={() => {
                   router.push("/locked");
