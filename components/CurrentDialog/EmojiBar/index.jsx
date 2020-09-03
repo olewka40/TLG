@@ -1,10 +1,10 @@
 import { Tab, Tabs } from "@material-ui/core";
 import React, { Fragment, memo } from "react";
 import PropTypes from "prop-types";
-import { EmojiTabsContainer } from "./styled";
+import { EmojiTabsContainer, StyledSwipeableViews } from "./styled";
 import { EmojiPicker } from "./EmojiPicker";
-import SwipeableViews from "react-swipeable-views";
 import uuid from "react-uuid";
+import styled from "styled-components";
 
 export const EmojiBar = ({ setMessage, message }) => {
   const [value, setValue] = React.useState(0);
@@ -28,7 +28,7 @@ export const EmojiBar = ({ setMessage, message }) => {
         <Tab style={{ minWidth: "100px" }} label="stickers" />
         <Tab style={{ minWidth: "100px" }} label="gifs" />
       </Tabs>
-      <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
+      <StyledSwipeableViews index={value} onChangeIndex={handleChangeIndex}>
         <TabPanel value={value} index={0}>
           <EmojiPicker setMessage={setMessage} message={message} />
         </TabPanel>
@@ -38,7 +38,7 @@ export const EmojiBar = ({ setMessage, message }) => {
         <TabPanel value={value} index={2}>
           Гифки
         </TabPanel>
-      </SwipeableViews>
+      </StyledSwipeableViews>
     </EmojiTabsContainer>
   );
 };
@@ -47,7 +47,7 @@ const TabPanel = props => {
   const { children, value, index, ...other } = props;
 
   return (
-    <Fragment
+    <StyledTabPanel
       key={uuid()}
       role="tabpanel"
       hidden={value !== index}
@@ -55,8 +55,8 @@ const TabPanel = props => {
       aria-labelledby={`scrollable-auto-tab-${index}`}
       {...other}
     >
-      {value === index && <>{children}</>}
-    </Fragment>
+      {value === index && <div>{children}</div>}
+    </StyledTabPanel>
   );
 };
 
@@ -65,3 +65,10 @@ TabPanel.propTypes = {
   index: PropTypes.any.isRequired,
   value: PropTypes.any.isRequired
 };
+
+export const StyledTabPanel = styled.div`
+  height: 100%;
+  > div > div > div {
+    height: 100%;
+  }
+`;

@@ -29,23 +29,23 @@ export const Footer = memo(() => {
 
   const { isLayoutOpened, setLayoutOpened } = useContext(MessageLayoutContext);
   const [isHovered, setHovered] = useState(false);
-  const triggerPicker = useCallback(
-    event => {
-      event.preventDefault();
-      setLayoutOpened(!isLayoutOpened);
-    },
-    [isLayoutOpened, setLayoutOpened]
-  );
+  const triggerPicker = useCallback(() => {
+    setHovered(false);
+
+    setLayoutOpened(isLayoutOpened => !isLayoutOpened);
+    console.log(isLayoutOpened, "LO");
+    console.log(isHovered, "H");
+  }, [setLayoutOpened, setHovered, isLayoutOpened]);
   const onMouseOver = useCallback(() => {
-    if (isLayoutOpened) {
+    if (isLayoutOpened === true) {
       return null;
     } else {
       setHovered(true);
     }
-  }, [isHovered]);
+  }, [isHovered, setHovered]);
   const onMouseLeave = useCallback(() => {
     setHovered(false);
-  }, []);
+  }, [setHovered]);
   return (
     <MsgPlace>
       <IconButton>
@@ -63,9 +63,13 @@ export const Footer = memo(() => {
           ref={areaRef}
         />
       </StyledTextArea>
-      <IconButton onMouseMove={onMouseOver} onMouseLeave={onMouseLeave}>
-        <MoodIcon color="primary" onClick={triggerPicker} />
-        {1 && (
+      <IconButton
+        onMouseMove={onMouseOver}
+        onMouseLeave={onMouseLeave}
+        onClick={triggerPicker}
+      >
+        <MoodIcon color="primary" />
+        {isHovered && (
           <EmojiWrapper>
             <EmojiBar setMessage={setMessage} message={message} />
           </EmojiWrapper>
