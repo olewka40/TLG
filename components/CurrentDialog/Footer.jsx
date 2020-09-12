@@ -3,32 +3,23 @@ import AttachFileIcon from "@material-ui/icons/AttachFile";
 import SendIcon from "@material-ui/icons/Send";
 import MoodIcon from "@material-ui/icons/Mood";
 import styled from "styled-components";
-import SocketService from "../../services/SocketService";
-import { useRouter } from "next/router";
 import TextareaAutosize from "react-textarea-autosize";
 import { MessageLayoutContext } from "../../context/messageLayoutContext";
 
-import { Popover, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { EmojiBar } from "./EmojiBar";
 
-export const Footer = memo(() => {
-  const router = useRouter();
+export const Footer = memo(({ message, setMessage }) => {
   const areaRef = useRef();
-  const [message, setMessage] = useState("");
-  const onSend = useCallback(() => {
-    if (!areaRef.current.value) return;
-
-    SocketService.emit("message-to-dialog", {
-      dialogId: router.query.id,
-
-      message: areaRef.current.value
-    });
-    areaRef.current.value = "";
-    setMessage("");
-  }, [router.query.id]);
-
-  const { isLayoutOpened, setLayoutOpened } = useContext(MessageLayoutContext);
+  console.log(message);
+  const { isLayoutOpened, setLayoutOpened, onSend } = useContext(
+    MessageLayoutContext
+  );
+  const onSendClick = () => {
+    onSend(areaRef, setMessage);
+  };
   const [isHovered, setHovered] = useState(false);
+
   const triggerPicker = useCallback(() => {
     setHovered(false);
 
@@ -75,7 +66,7 @@ export const Footer = memo(() => {
           </EmojiWrapper>
         )}
       </IconButton>
-      <IconButton onClick={onSend}>
+      <IconButton onClick={onSendClick}>
         <SendIcon color="primary" />
       </IconButton>
     </MsgPlace>

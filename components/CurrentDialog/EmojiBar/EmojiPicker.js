@@ -2,7 +2,8 @@ import React from "react";
 import { Picker } from "emoji-mart";
 import { EmojiPickerContainer } from "./styled";
 
-export const EmojiPicker = ({ setMessage, message }) => {
+export const EmojiPicker = ({ message,setMessage }) => {
+  console.log(message, 3213123123);
   return (
     <EmojiPickerContainer>
       <Picker

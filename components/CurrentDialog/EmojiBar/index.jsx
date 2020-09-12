@@ -6,8 +6,9 @@ import { EmojiPicker } from "./EmojiPicker";
 import uuid from "react-uuid";
 import styled from "styled-components";
 
-export const EmojiBar = ({ setMessage, message }) => {
+export const EmojiBar = ({ message, setMessage }) => {
   const [value, setValue] = React.useState(0);
+  console.log(message, 123123);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -30,7 +31,7 @@ export const EmojiBar = ({ setMessage, message }) => {
       </Tabs>
       <StyledSwipeableViews index={value} onChangeIndex={handleChangeIndex}>
         <TabPanel value={value} index={0}>
-          <EmojiPicker setMessage={setMessage} message={message} />
+          <EmojiPicker message={message} setMessage={setMessage} />
         </TabPanel>
         <TabPanel value={value} index={1}>
           Стикеры
