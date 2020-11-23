@@ -8,7 +8,7 @@ import "./emoji-mart.css";
 import "./scroll.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles/";
 
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = "http://192.168.1.102:3000/";
 const GlobalStyle = createGlobalStyle`
   body {
     margin: 0;

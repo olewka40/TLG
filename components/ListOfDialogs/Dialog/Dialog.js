@@ -26,7 +26,7 @@ export const Dialog = ({
   opened
 }) => {
   const router = useRouter();
-  const opponent = users.filter(e => e._id === userId)[0];
+  const opponent = users.filter(e => e._id !== userId);
   return (
     <DialogContainer
       active={active}
@@ -34,7 +34,7 @@ export const Dialog = ({
         router.push("/dialogs/[id]", `/dialogs/${dialogid}`);
       }}
     >
-      <ImgAvatar src={`http://localhost:3000/api/files/${opponent.avatar}`} />
+      <ImgAvatar src={`http://192.168.102:3000/api/files/${opponent.avatar}`} />
       {opened && (
         <DialogInfo>
           <TopInfo>
