@@ -4,8 +4,6 @@ import { createGlobalStyle } from "styled-components";
 import { withRouter } from "next/router";
 import axios from "axios";
 import Head from "next/head";
-import "./emoji-mart.css";
-import "./scroll.css";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles/";
 
 axios.defaults.baseURL = "http://192.168.1.102:3000/";
